@@ -14,8 +14,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Print values
-      run: echo test
-      run: echo ${{ secrets.GCP_SA_KEY }}
+      run: |
+        echo test
+        echo ${{ secrets.GCP_SA_KEY }}
         
 
 
