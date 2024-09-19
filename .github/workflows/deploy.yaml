@@ -18,6 +18,9 @@ jobs:
       with:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         project_id: ${{ secrets.GCP_PROJECT }}
+        
+    - name: Print hardcoded value
+      run: echo "This is a hardcoded value"
 
     # - name: Authenticate Docker with GCP
     #   run: |
