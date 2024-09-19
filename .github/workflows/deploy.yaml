@@ -1,4 +1,4 @@
-name: Deploy to GCP
+name: Deploy to Cloud Run
 
 on:
   push:
@@ -6,30 +6,32 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Google Cloud SDK
+    - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
       with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
+        project_id: ${{ secrets.GCP_PROJECT }}
 
-    - name: Authenticate Docker to Google Container Registry (GCR)
+    - name: Authenticate Docker with GCP
       run: |
-        echo "${{ secrets.GCP_SA_KEY }}" | docker login -u _json_key --password-stdin https://gcr.io
+        echo ${{ secrets.GCP_SA_KEY }} | docker login -u _json_key --password-stdin https://gcr.io
 
-    # - name: Build and push Docker image to GCR
-    #   run: |
-    #     IMAGE=gcr.io/${{ secrets.GCP_PROJECT_ID }}/flask-app:$GITHUB_SHA
-    #     docker build -t $IMAGE .
-    #     docker push $IMAGE
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/flask-app:latest .
+        docker push gcr.io/${{ secrets.GCP_PROJECT }}/flask-app:latest
 
-    # - name: Deploy to GCP Compute Engine (or Kubernetes Engine)
-    #   run: |
-    #     # Your deployment commands, such as gcloud run deploy for Cloud Run, or kubectl for GKE
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy flask-app \
+        --image gcr.io/${{ secrets.GCP_PROJECT }}/flask-app:latest \
+        --platform managed \
+        --region ${{ secrets.GCP_REGION }} \
+        --allow-unauthenticated
