@@ -1,52 +1,52 @@
-# name: Deploy to GCR and GCP
+name: Deploy to GCR and GCP
 
-# on:
-#   push:
-#     branches:
-#       - main  
+on:
+  push:
+    branches:
+      - main  
 
-# jobs:
-#   build-and-deploy:
-#     runs-on: ubuntu-latest
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Check out the repository
-#         uses: actions/checkout@v3
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
 
-#       - name: Set up Python
-#         uses: actions/setup-python@v3
-#         with:
-#           python-version: '3.9'  # Adjust to your Python version
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'  # Adjust to your Python version
 
-#       - name: Install dependencies
-#         run: |
-#           python -m pip install --upgrade pip
-#           pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-#       - name: Set up Cloud SDK
-#         uses: google-github-actions/setup-gcloud@v1
-#         with:
-#           project_id: ${{ secrets.GCP_PROJECT }}
-#           service_account_key: ${{ secrets.GCP_SA_KEY }}
-#           export_default_credentials: true
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
       
-#       - name: Authenticate Docker with GCR
-#         run: |
-#           gcloud auth configure-docker
+      - name: Authenticate Docker with GCR
+        run: |
+          gcloud auth configure-docker
 
-#       - name: Build Docker image
-#         run: |
-#           docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/python-app-v1:${{ github.sha }} .
+      - name: Build Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/python-app-v1:${{ github.sha }} .
 
-#       - name: Push Docker image
-#         run: |
-#           docker push gcr.io/${{ secrets.GCP_PROJECT }}/python-app-v1:${{ github.sha }}
+      - name: Push Docker image
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT }}/python-app-v1:${{ github.sha }}
 
 
-#       - name: Deploy to GCP
-#         run: |
-#           gcloud run deploy python-app-v1 \
-#             --image ${{ secrets.GCR_IMAGE }} \
-#             --platform managed \
-#             --region ${{ secrets.GCP_REGION }} \
-#             --allow-unauthenticated  # Modify as necessary
+      - name: Deploy to GCP
+        run: |
+          gcloud run deploy python-app-v1 \
+            --image ${{ secrets.GCR_IMAGE }} \
+            --platform managed \
+            --region ${{ secrets.GCP_REGION }} \
+            --allow-unauthenticated  # Modify as necessary
