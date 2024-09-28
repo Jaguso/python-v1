@@ -24,11 +24,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v1
+        uses: google-github-actions/auth@v2.0.0  
         with:
-          project_id: ${{ secrets.GCP_PROJECT }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
+          workload_identity_provider: 'projects/691180066061/locations/global/workloadIdentityPools/github-pool/providers/github'
+          service_account: 'github-wif@python-v1-435902.iam.gserviceaccount.com'
       
       - name: Authenticate Docker with GCR
         run: |
@@ -43,10 +42,10 @@ jobs:
           docker push gcr.io/${{ secrets.GCP_PROJECT }}/python-app-v1:${{ github.sha }}
 
 
-      - name: Deploy to GCP
-        run: |
-          gcloud run deploy python-app-v1 \
-            --image ${{ secrets.GCR_IMAGE }} \
-            --platform managed \
-            --region ${{ secrets.GCP_REGION }} \
-            --allow-unauthenticated  # Modify as necessary
+      # - name: Deploy to GCP
+      #   run: |
+      #     gcloud run deploy python-app-v1 \
+      #       --image ${{ secrets.GCR_IMAGE }} \
+      #       --platform managed \
+      #       --region ${{ secrets.GCP_REGION }} \
+      #       --allow-unauthenticated  # Modify as necessary
