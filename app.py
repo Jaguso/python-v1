@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return 'Hello, Worldas!'
+    return 'Hello, World!'
 
 
 # needed to add host to listen in localhost
