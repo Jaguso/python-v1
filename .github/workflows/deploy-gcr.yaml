@@ -49,7 +49,7 @@ jobs:
       - name: Deploy to GCP
         run: |
           gcloud run deploy python-app-v1 \
-            --image ${{ secrets.GCR_IMAGE }} \
+            --image gcr.io/${{ secrets.GCP_PROJECT }}/python-app-v1:${{ github.sha }} \
             --platform managed \
             --region ${{ secrets.GCP_REGION }} \
             --allow-unauthenticated  # Modify as necessary
